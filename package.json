@@ -1,10 +1,11 @@
 {
   "name": "blog-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "A Node project designed as part of Thinkful's coding course",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "test": "mocha --exit"
   },
   "author": "vsimone",
   "license": "ISC",
@@ -12,5 +13,18 @@
     "express": "^4.16.3",
     "morgan": "^1.9.0",
     "uuid": "^3.2.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vmsimone/blog-api.git"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.1.1"
+  },
+  "bugs": {
+    "url": "https://github.com/vmsimone/blog-api/issues"
+  },
+  "homepage": "https://github.com/vmsimone/blog-api#readme",
+  "keywords": []
 }

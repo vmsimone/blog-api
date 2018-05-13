@@ -1,72 +1,51 @@
-const uuid = require('uuid');
 const express = require('express');
-const router = express.Router();
 const morgan = require('morgan');
-const bodyParser = require('body-parser');
 
-const {BlogPosts} = require('./models');
-
-const jsonParser = bodyParser.json();
 const app = express();
+
+const blogRouter = require('./blogRouter');
 
 // log the http layer
 app.use(morgan('common'));
-app.use(jsonParser);
 
-BlogPosts.create('First Post', 'Just seeing if this works', 'Me', '5/8/2018');
-BlogPosts.create('Haiku', 'Haiku are easy \n But sometimes they don\'t make sense \n Refrigerator', 'Me', '5/8/2018');
-BlogPosts.create('Coding', 'Still don\'t speak binary. What a 01101010 01101111 01101011 01100101', 'Me', '5/8/2018');
+app.use(express.static('public'));
 
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/views/index.html');
+});
 
-function checkPostProperties(req, res) {
-  const BlogPostsProperties = ['title', 'content', 'author', 'publishDate'];
-  for (i=0; i<BlogPostsProperties.length; i++) {
-    const thisProperty = BlogPostsProperties[i];
-    if (!(thisProperty in req.body)) {
-      const errMsg = `Error: ${thisProperty} not in request body.`;
-      console.log(errMsg);
-      return res.status(400).send(errMsg);
-    };
-  }
+app.use('/blog-posts', blogRouter);
+
+let server;
+
+function runServer() {
+  const port = process.env.PORT || 8080;
+  return new Promise((resolve, reject) => {
+    server = app.listen(port, () => {
+      console.log(`Your app is listening on port ${port}`);
+      resolve(server);
+    }).on('error', err => {
+      reject(err)
+    });
+  });
 }
 
-app.get('/blog-posts', (req, res) => {
-  res.json(BlogPosts.get());
-});
-
-app.post('/blog-posts', (req, res) => {
-    checkPostProperties(req, res);
-
-    const newPost = BlogPosts.create(req.body.title, req.body.content, req.body.author, req.body.publishDate);
-    res.status(201).json(newPost);
-});
-
-app.put('/blog-posts/:id', (req, res) => {
-  checkPostProperties(req, res);
-
-  if (req.params.id !== req.body.id) {
-    const message = `Request path id (${req.params.id}) and request body id (${req.body.id}) must match`;
-    console.error(message);
-    return res.status(400).send(message);
-  }
-
-  BlogPosts.update({
-    id: req.body.id,
-    title: req.body.title,
-    content: req.body.content,
-    author: req.body.author,
-    publishDate: req.body.publishDate
+function closeServer() {
+  return new Promise((resolve, reject) => {
+    console.log('Closing server');
+    server.close(err => {
+      if (err) {
+        reject(err);
+        // so we don't also call `resolve()`
+        return;
+      }
+      resolve();
+    });
   });
-  console.log(`Updating blog post with id \`${req.params.id}\``);
-  res.status(204).end();
-  });
+}
 
-app.delete('/blog-posts/:id', (req, res) => {
-  BlogPosts.delete(req.params.id);
-  console.log(`Deleted post with id \`${req.params.id}\``);
-  res.status(204).end();
-});
+if (require.main === module) {
+  runServer().catch(err => console.error(err));
+};
 
-app.listen(process.env.PORT || 8080, () => {
-  console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
-});
+module.exports = {app, runServer, closeServer};
