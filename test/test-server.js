@@ -55,6 +55,9 @@ describe('Blog Post', function() {
       });
   });
 
+
+  //CURRENTLY RETURNS A 404
+
   it('should update an existing post on PUT', function() {
 
     const updatedPost = {
@@ -77,6 +80,8 @@ describe('Blog Post', function() {
         expect(res).to.have.status(204);
       });
   });
+
+  //CURRENTLY RETURNS A 404
 
   it('should delete a blog post on DELETE', function() {
     return chai.request(app)
