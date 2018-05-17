@@ -35,7 +35,7 @@ router.post('/', jsonParser, (req, res) => {
     res.status(201).json(newPost);
 });
 
-router.put('/blog-posts/:id', (req, res) => {
+router.put('/:id', jsonParser, (req, res) => {
   checkPostProperties(req, res);
 
   if (req.params.id !== req.body.id) {
@@ -55,7 +55,7 @@ router.put('/blog-posts/:id', (req, res) => {
   res.status(204).end();
   });
 
-router.delete('/blog-posts/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
   BlogPosts.delete(req.params.id);
   console.log(`Deleted post with id \`${req.params.id}\``);
   res.status(204).end();

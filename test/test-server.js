@@ -65,7 +65,7 @@ describe('Blog Post', function() {
       'content': 'You thought THAT was cool? Think again',
       'author': 'Dave',
       'publishDate': '5/13/18'
-    }
+    };
 
     return chai.request(app)
       .get('/blog-posts')
@@ -76,12 +76,9 @@ describe('Blog Post', function() {
           .send(updatedPost);
       })
       .then(function(res) {
-        //can't retrieve actual data because I don't know the ID's
         expect(res).to.have.status(204);
       });
   });
-
-  //CURRENTLY RETURNS A 404
 
   it('should delete a blog post on DELETE', function() {
     return chai.request(app)
